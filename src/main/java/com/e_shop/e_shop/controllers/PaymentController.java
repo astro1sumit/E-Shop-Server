@@ -6,6 +6,7 @@ import com.razorpay.RazorpayClient;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:3000")
 public class PaymentController {
 
+    private final OrderService orderService;
     @Value("${razorpay.key.id}")
     private String keyId;
 
@@ -26,7 +28,9 @@ public class PaymentController {
     private OrderRepository orderRepository;
 
     @Autowired
-    private OrderService orderService;
+    public PaymentController(@Lazy OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @PostMapping("/create-order")
     public ResponseEntity<?> createOrder(@RequestBody Order orderData) {

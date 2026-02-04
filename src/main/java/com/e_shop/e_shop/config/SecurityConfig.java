@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/products/**").permitAll()
+                        .requestMatchers("/test").permitAll() // <--- ADD THIS LINE
                         .requestMatchers("/api/orders/**", "/api/payment/**", "/api/wishlist/**").authenticated()
                         .anyRequest().authenticated()
                 )
@@ -58,10 +59,13 @@ public class SecurityConfig {
                 .build();
     }
 
+    @Value("${frontend.url}")
+    private String frontendUrl;
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://e-shop-sigma-rosy.vercel.app/"));
+        // Add localhost:3000 to the allowed list
+        configuration.setAllowedOrigins(Arrays.asList(frontendUrl));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
